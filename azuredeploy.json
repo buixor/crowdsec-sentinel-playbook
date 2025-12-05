@@ -24,20 +24,6 @@
         "AzureSentinelConnectionName": "[concat('azuresentinel-', parameters('PlaybookName'))]"
     },
     "resources": [
-
-        {
-            "type": "Microsoft.Web/connections",
-            "apiVersion": "2016-06-01",
-            "name": "[variables('AzureSentinelConnectionName')]",
-            "location": "[resourceGroup().location]",
-            "properties": {
-                "displayName": "[parameters('UserName')]",
-                "customParameterValues": {},
-                "api": {
-                    "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/azuresentinel')]"
-                }
-            }
-        },
         {
             "type": "Microsoft.Logic/workflows",
             "apiVersion": "2017-07-01",
@@ -102,7 +88,7 @@
                                         "uri": "https://cti.api.crowdsec.net/v2/smoke/@{items('For_each_IPs')?['Address']}",
                                         "method": "GET",
                                         "headers": {
-                                            "x-api-key": "@{parameters('CrowdSec API Key')}"
+                                            "x-api-key": "@{parameters('CrowdSecAPIKey')}"
                                         }
                                     },
                                     "runtimeConfiguration": {
@@ -362,7 +348,7 @@
                     },
                     "outputs": {},
                     "parameters": {
-                        "CrowdSec API Key": {
+                        "CrowdSecAPIKey": {
                             "defaultValue": "",
                             "type": "SecureString"
                         },
@@ -389,7 +375,7 @@
                         "value": {
                             "azuresentinel": {
                                 "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/azuresentinel')]",
-                                "connectionId":  "[resourceId('Microsoft.Web/connections', variables('AzureSentinelConnectionName'))",
+                                "connectionId":  "[resourceId('Microsoft.Web/connections', variables('AzureSentinelConnectionName'))]",
                                 "connectionName": "[variables('AzureSentinelConnectionName')]",
                                 "connectionProperties": {
                                     "authentication": {
