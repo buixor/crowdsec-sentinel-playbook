@@ -17,16 +17,6 @@
             "defaultValue": "CrowdSec-Playbook-Sentinel-API-Connection",
             "metadata": { "description": "Name for the Azure Sentinel API connection resource." }
         },
-        "sentinelSubscriptionId": {
-            "type": "string",
-            "defaultValue": "REPLACE_WITH_SENTINEL_SUBSCRIPTION_ID", 
-            "metadata": { "description": "Subscription ID of the Sentinel workspace. MUST be updated for deployment." }
-        },
-        "sentinelResourceGroupName": {
-            "type": "string",
-            "defaultValue": "REPLACE_WITH_SENTINEL_RESOURCE_GROUP_NAME", 
-            "metadata": { "description": "Resource Group Name of the Sentinel workspace. MUST be updated for deployment." }
-        },
         "sentinelWorkspaceName": {
             "type": "string",
             "defaultValue": "REPLACE_WITH_SENTINEL_WORKSPACE_NAME",
@@ -36,11 +26,6 @@
             "type": "securestring",
             "defaultValue": "REPLACE_ME_WITH_YOUR_SECRET_CROWDSEC_API_KEY",
             "metadata": { "description": "The API key required to authenticate with the CrowdSec CTI API. MUST be provided during deployment." }
-        },
-        "initialDelayInSeconds": {
-            "type": "int",
-            "defaultValue": 60,
-            "metadata": { "description": "The delay (in seconds) before the Logic App begins processing entities." }
         }
     },
     "variables": {
@@ -205,7 +190,7 @@
                                                                         "TagsToAdd": "@triggerBody()?['ExtendedLinks']"
                                                                     }
                                                                 },
-                                                                "path": "[concat('/Incidents/subscriptions/', parameters('sentinelSubscriptionId'), '/resourceGroups/', parameters('sentinelResourceGroupName'), '/workspaces/', parameters('sentinelWorkspaceName'))]"
+                                                                "path": "[concat('/Incidents/subscriptions/', subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/workspaces/', parameters('sentinelWorkspaceName'))]"
                                                             },
                              
                                                             "runAfter": {}
