@@ -14,6 +14,10 @@
             "defaultValue": "",
             "type": "string"
         },
+        "WorkspaceName": {
+            "defaultValue": "",
+            "type": "string"
+        },
         "subscriptionId": {
             "defaultValue": "",
             "type": "string"
@@ -42,6 +46,23 @@
                 "definition": {
                     "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
                     "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "CrowdSecAPIKey": {
+                            "defaultValue": "[parameters('CrowdSecAPIKey')]",
+                            "type": "SecureString"
+                        },
+                        "WorkspaceName": {
+                            "defaultValue": "[parameters('WorkspaceName')]",
+                            "type": "String",
+                            "metadata": {
+                                "description": "Log Analytics Workspace Name"
+                            }
+                        },
+                        "PlaybookName": {
+                            "defaultValue": "[parameters('PlaybookName')]",
+                            "type": "String"
+                        }
+                    },
                     "triggers": {
                         "Microsoft_Sentinel_alert": {
                             "type": "ApiConnectionWebhook",
@@ -346,28 +367,7 @@
                             }
                         }
                     },
-                    "outputs": {},
-                    "parameters": {
-                        "CrowdSecAPIKey": {
-                            "defaultValue": "",
-                            "type": "SecureString"
-                        },
-                        "Workspace Name": {
-                            "defaultValue": "",
-                            "type": "String",
-                            "metadata": {
-                                "description": "Log Analytics Workspace Name"
-                            }
-                        },
-                        "Playbook Name": {
-                            "defaultValue": "\"",
-                            "type": "String"
-                        },
-                        "$connections": {
-                            "type": "Object",
-                            "defaultValue": {}
-                        }
-                    }
+                    "outputs": {}
                 },
                 "parameters": {
                     "$connections": {
