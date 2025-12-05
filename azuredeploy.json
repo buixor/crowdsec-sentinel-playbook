@@ -2,7 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        // --- Core Resource Parameters ---
         "logicAppName": {
             "type": "string",
             "defaultValue": "CrowdSec-CTI-Playbook-Prod",
@@ -10,66 +9,54 @@
         },
         "location": {
             "type": "string",
-            // Defaulted to 'eastus' (change if your Sentinel is elsewhere)
             "defaultValue": "eastus",
             "metadata": { "description": "The Azure region for the Logic App and its connections. Recommended to match Sentinel workspace location." }
         },
-        // --- Sentinel Connection Parameters ---
         "sentinelConnectionName": {
             "type": "string",
-            // Defaulted to the desired connection name
             "defaultValue": "CrowdSec-Playbook-Sentinel-API-Connection",
             "metadata": { "description": "Name for the Azure Sentinel API connection resource." }
         },
-        // IMPORTANT: These IDs are used to correctly scope the incident creation in Sentinel
         "sentinelSubscriptionId": {
             "type": "string",
-            // Setting a placeholder default value, but the user must update this during deployment
             "defaultValue": "REPLACE_WITH_SENTINEL_SUBSCRIPTION_ID", 
             "metadata": { "description": "Subscription ID of the Sentinel workspace. MUST be updated for deployment." }
         },
         "sentinelResourceGroupName": {
             "type": "string",
-            // Setting a placeholder default value, but the user must update this during deployment
             "defaultValue": "REPLACE_WITH_SENTINEL_RESOURCE_GROUP_NAME", 
             "metadata": { "description": "Resource Group Name of the Sentinel workspace. MUST be updated for deployment." }
         },
         "sentinelWorkspaceName": {
             "type": "string",
-            // Setting a placeholder default value, but the user must update this during deployment
             "defaultValue": "REPLACE_WITH_SENTINEL_WORKSPACE_NAME",
             "metadata": { "description": "The name of the Sentinel/Log Analytics workspace. MUST be updated for deployment." }
         },
-        // --- External API Parameters ---
         "crowdSecApiKey": {
-            // Use secureString for sensitive data like API keys
             "type": "securestring",
-            // Setting a placeholder default value. User MUST provide the actual secret value.
             "defaultValue": "REPLACE_ME_WITH_YOUR_SECRET_CROWDSEC_API_KEY",
             "metadata": { "description": "The API key required to authenticate with the CrowdSec CTI API. MUST be provided during deployment." }
         },
         "initialDelayInSeconds": {
             "type": "int",
-            // Defaulted to 60 seconds
             "defaultValue": 60,
             "metadata": { "description": "The delay (in seconds) before the Logic App begins processing entities." }
         }
     },
     "variables": {
-        // Reference for the managed API ID
         "sentinelManagedApiId": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('location'), '/managedApis/azuresentinel')]"
     },
     "resources": [
-        // ------------------------------------------
-        // RESOURCE 1: Azure Sentinel API Connection
-        // ------------------------------------------
+        
+        
+        
         {
             "type": "Microsoft.Web/connections",
             "apiVersion": "2018-07-01b",
             "name": "[parameters('sentinelConnectionName')]",
             "location": "[parameters('location')]",
             "properties": {
-                // FIX: Removed unnecessary 'connectionParameters' object when using MSI
+                
                 "api": {
                     "id": "[variables('sentinelManagedApiId')]"
                 },
@@ -82,20 +69,20 @@
                 }
             }
         },
-        // ------------------------------------------
-        // RESOURCE 2: The Logic App (Playbook) Definition
-        // ------------------------------------------
+        
+        
+        
         {
             "type": "Microsoft.Logic/workflows",
-            "apiVersion": "2019-05-01",
+            "apiVersion": "2016-06-01", 
             "name": "[parameters('logicAppName')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                // Ensure connections are created BEFORE the Logic App tries to use them
+                
                 "[resourceId('Microsoft.Web/connections', parameters('sentinelConnectionName'))]"
             ],
             "properties": {
-                // The workflow definition copied from your raw JSON export, with parameters applied
+                
                 "definition": {
                     "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
                     "contentVersion": "1.0.0.0",
@@ -105,7 +92,7 @@
                             "inputs": {
                                 "host": {
                                     "connection": {
-                                        // Parameterized connection name
+                                        
                                         "name": "@parameters('$connections')['azuresentinel']['connectionId']"
                                     }
                                 },
@@ -146,7 +133,7 @@
                                         "uri": "https://cti.api.crowdsec.net/v2/smoke/@{items('For_each_IPs')?['Address']}",
                                         "method": "GET",
                                         "headers": {
-                                            // Parameterized the CrowdSec API Key
+                                            
                                             "x-api-key": "@{parameters('CrowdSec API Key')}"
                                         }
                                     },
@@ -338,7 +325,7 @@
                             "type": "Wait",
                             "inputs": {
                                 "interval": {
-                                    // Parameterized the delay count
+                                    
                                     "count": "@{parameters('initialDelayInSeconds')}",
                                     "unit": "Second"
                                 }
@@ -348,7 +335,7 @@
                     },
                     "outputs": {},
                     "parameters": {
-                        // Logic App Definition Parameters - referenced inside the workflow (runtime)
+                        
                         "CrowdSec API Key": {
                             "defaultValue": "N/A",
                             "type": "SecureString"
@@ -356,7 +343,7 @@
                         "$connections": {
                             "type": "Object",
                             "defaultValue": {
-                                // FIX: Provide the expected structure for the connection reference
+                                
                                 "azuresentinel": {
                                     "connectionId": "REPLACE_WITH_CONNECTION_ID",
                                     "connectionName": "REPLACE_WITH_CONNECTION_NAME",
@@ -366,9 +353,9 @@
                         }
                     }
                 },
-                // Crucial section to connect the Logic App to the API Connection resource
+                
                 "parameters": {
-                    // ARM Template Parameters - referenced here to set the runtime Logic App parameters
+                    
                     "CrowdSec API Key": {
                         "value": "[parameters('crowdSecApiKey')]"
                     },
