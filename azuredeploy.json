@@ -7,11 +7,6 @@
             "defaultValue": "CrowdSec-CTI-Playbook-Prod",
             "metadata": { "description": "The name for the Logic App Playbook." }
         },
-        "location": {
-            "type": "string",
-            "defaultValue": "eastus",
-            "metadata": { "description": "The Azure region for the Logic App and its connections. Recommended to match Sentinel workspace location." }
-        },
         "sentinelConnectionName": {
             "type": "string",
             "defaultValue": "CrowdSec-Playbook-Sentinel-API-Connection",
@@ -26,17 +21,22 @@
             "type": "securestring",
             "defaultValue": "REPLACE_ME_WITH_YOUR_SECRET_CROWDSEC_API_KEY",
             "metadata": { "description": "The API key required to authenticate with the CrowdSec CTI API. MUST be provided during deployment." }
+        },
+        "initialDelayInSeconds": {
+            "type": "int",
+            "defaultValue": 120,
+            "metadata": { "description": "Initial delay in seconds before processing the alert to allow data to propagate." }
         }
     },
     "variables": {
-        "sentinelManagedApiId": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('location'), '/managedApis/azuresentinel')]"
+        "sentinelManagedApiId": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/azuresentinel')]"
     },
     "resources": [
         {
             "type": "Microsoft.Web/connections",
             "apiVersion": "2018-07-01-preview",
             "name": "[parameters('sentinelConnectionName')]",
-            "location": "[parameters('location')]",
+            "location": "[resourceGroup().location]",
             "properties": {
                 
                 "api": {
@@ -50,7 +50,7 @@
             "type": "Microsoft.Logic/workflows",
             "apiVersion": "2018-07-01-preview", 
             "name": "[parameters('logicAppName')]",
-            "location": "[parameters('location')]",
+            "location": "[resourceGroup().location]",
             "dependsOn": [
                 
                 "[resourceId('Microsoft.Web/connections', parameters('sentinelConnectionName'))]"
@@ -330,6 +330,9 @@
                 },
                 
                 "parameters": {
+                    "initialDelayInSeconds": {
+                        "value": "[parameters('initialDelayInSeconds')]"
+                    },
                     "CrowdSec API Key": {
                         "value": "[parameters('crowdSecApiKey')]"
                     },
