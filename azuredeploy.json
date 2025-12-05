@@ -5,44 +5,53 @@
         // --- Core Resource Parameters ---
         "logicAppName": {
             "type": "string",
-            "defaultValue": "CrowdSec-CTI-Playbook",
+            "defaultValue": "CrowdSec-CTI-Playbook-Prod",
             "metadata": { "description": "The name for the Logic App Playbook." }
         },
         "location": {
             "type": "string",
-            "defaultValue": "[resourceGroup().location]",
-            "metadata": { "description": "The Azure region for the Logic App and its connections." }
+            // Defaulted to 'eastus' (change if your Sentinel is elsewhere)
+            "defaultValue": "eastus",
+            "metadata": { "description": "The Azure region for the Logic App and its connections. Recommended to match Sentinel workspace location." }
         },
         // --- Sentinel Connection Parameters ---
         "sentinelConnectionName": {
             "type": "string",
-            "defaultValue": "azuresentinel-api-connection",
+            // Defaulted to the desired connection name
+            "defaultValue": "CrowdSec-Playbook-Sentinel-API-Connection",
             "metadata": { "description": "Name for the Azure Sentinel API connection resource." }
         },
         // IMPORTANT: These IDs are used to correctly scope the incident creation in Sentinel
         "sentinelSubscriptionId": {
             "type": "string",
-            "defaultValue": "[subscription().subscriptionId]",
-            "metadata": { "description": "Subscription ID of the Sentinel workspace." }
+            // Setting a placeholder default value, but the user must update this during deployment
+            "defaultValue": "REPLACE_WITH_SENTINEL_SUBSCRIPTION_ID", 
+            "metadata": { "description": "Subscription ID of the Sentinel workspace. MUST be updated for deployment." }
         },
         "sentinelResourceGroupName": {
             "type": "string",
-            "defaultValue": "[resourceGroup().name]",
-            "metadata": { "description": "Resource Group Name of the Sentinel workspace." }
+            // Setting a placeholder default value, but the user must update this during deployment
+            "defaultValue": "REPLACE_WITH_SENTINEL_RESOURCE_GROUP_NAME", 
+            "metadata": { "description": "Resource Group Name of the Sentinel workspace. MUST be updated for deployment." }
         },
         "sentinelWorkspaceName": {
             "type": "string",
-            "metadata": { "description": "The name of the Sentinel/Log Analytics workspace." }
+            // Setting a placeholder default value, but the user must update this during deployment
+            "defaultValue": "REPLACE_WITH_SENTINEL_WORKSPACE_NAME",
+            "metadata": { "description": "The name of the Sentinel/Log Analytics workspace. MUST be updated for deployment." }
         },
         // --- External API Parameters ---
         "crowdSecApiKey": {
             // Use secureString for sensitive data like API keys
             "type": "securestring",
-            "metadata": { "description": "The API key required to authenticate with the CrowdSec CTI API." }
+            // Setting a placeholder default value. User MUST provide the actual secret value.
+            "defaultValue": "REPLACE_ME_WITH_YOUR_SECRET_CROWDSEC_API_KEY",
+            "metadata": { "description": "The API key required to authenticate with the CrowdSec CTI API. MUST be provided during deployment." }
         },
         "initialDelayInSeconds": {
             "type": "int",
-            "defaultValue": 120,
+            // Defaulted to 60 seconds
+            "defaultValue": 60,
             "metadata": { "description": "The delay (in seconds) before the Logic App begins processing entities." }
         }
     },
