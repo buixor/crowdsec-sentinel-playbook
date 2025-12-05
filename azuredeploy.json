@@ -315,7 +315,7 @@
                         },
                         "initialDelayInSeconds": {
                             "defaultValue": 120,
-                            "type": "Int"
+                            "type": "int"
                         },
                         "$connections": {
                             "type": "Object",
