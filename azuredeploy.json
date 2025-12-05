@@ -69,8 +69,12 @@
             "name": "[parameters('sentinelConnectionName')]",
             "location": "[parameters('location')]",
             "properties": {
-                // Sentinel uses Managed Service Identity for secure authentication
-                "connectionParameters": {},
+                // FIX: Added 'api' object inside connectionParameters for compatibility
+                "connectionParameters": {
+                    "api": {
+                        "id": "[variables('sentinelManagedApiId')]"
+                    }
+                },
                 "api": {
                     "id": "[variables('sentinelManagedApiId')]"
                 },
@@ -232,6 +236,7 @@
                                                                 },
                                                                 "path": "[concat('/Incidents/subscriptions/', parameters('sentinelSubscriptionId'), '/resourceGroups/', parameters('sentinelResourceGroupName'), '/workspaces/', parameters('sentinelWorkspaceName'))]"
                                                             },
+                             
                                                             "runAfter": {}
                                                         },
                                                         "Add_alert_to_incident": {
