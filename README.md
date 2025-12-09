@@ -6,6 +6,7 @@
 
  - Deploy
  - Give "Microsoft Sentinel Contributor" roles to the Logic App via IAM
+ 
  - Allow Azure Sentinel API Connection (General -> Edit API Connection)
  - Give "Microsoft Sentinel Automation Contributor" to "Azure Security Insights" 
  - Give "Logic App Contributor" to "Azure Security Insights"
